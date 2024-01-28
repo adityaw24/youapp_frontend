@@ -1,11 +1,15 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:youapp_frontend/controller/network/http_request.dart';
+import 'package:youapp_frontend/service/storage_service.dart';
+import 'package:youapp_frontend/view/screen/profile_screen.dart';
 
 const httpRequest = HttpRequest();
+final storage = StorageService();
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({
@@ -25,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   String? errorMessage;
+  dynamic userData;
 
   @override
   void dispose() {
@@ -35,6 +40,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleRegister() {
     widget.onRegister(true);
+  }
+
+  void _goProfile() {
+    storage.readData('user_data').then((value) {
+      setState(() {
+        userData = jsonDecode(value!);
+      });
+    });
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ProfileScreen(userData: userData),
+      ),
+    );
   }
 
   void _onSubmit() async {
@@ -66,6 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } on Exception catch (err) {
       // print('error => $err');
       setState(() {
+        _isSubmit = false;
         errorMessage = err.toString();
       });
     }
@@ -73,6 +93,11 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isSubmit = false;
     });
+
+    _emailController.clear();
+    _passwordController.clear();
+
+    _goProfile();
   }
 
   void _snackbarNotification(String message) {
@@ -120,17 +145,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(
                     height: 24,
                   ),
-                  TextField(
+                  CupertinoTextField.borderless(
+                    placeholder: 'Enter email',
                     controller: _emailController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter Email',
-                      hintStyle: TextStyle(
-                        color: Color.fromRGBO(255, 255, 255, 0.3),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5),
                       ),
-                      fillColor: Color.fromRGBO(255, 255, 255, 0.1),
-                      enabledBorder: InputBorder.none,
-                      alignLabelWithHint: false,
-                      filled: true,
+                      color: Color.fromRGBO(255, 255, 255, 0.1),
+                    ),
+                    placeholderStyle: const TextStyle(
+                      color: Color.fromRGBO(255, 255, 255, 0.3),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
                     ),
                     enableSuggestions: true,
                     style: const TextStyle(
@@ -140,35 +169,39 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(
                     height: 12,
                   ),
-                  TextField(
+                  CupertinoTextField.borderless(
+                    placeholder: 'Enter password',
                     controller: _passwordController,
                     obscureText: !_passwordVisible,
-                    decoration: InputDecoration(
-                      hintText: 'Enter password',
-                      hintStyle: const TextStyle(
-                        color: Color.fromRGBO(255, 255, 255, 0.3),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5),
                       ),
-                      fillColor: const Color.fromRGBO(255, 255, 255, 0.1),
-                      enabledBorder: InputBorder.none,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _passwordVisible
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          color: const Color.fromRGBO(255, 255, 255, 0.5),
-                        ),
-                        onPressed: () {
-                          setState(
-                            () {
-                              _passwordVisible = !_passwordVisible;
-                            },
-                          );
-                        },
-                      ),
-                      alignLabelWithHint: false,
-                      filled: true,
+                      color: Color.fromRGBO(255, 255, 255, 0.1),
                     ),
-                    // keyboardType: TextInputType.visiblePassword,
+                    placeholderStyle: const TextStyle(
+                      color: Color.fromRGBO(255, 255, 255, 0.3),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    suffix: IconButton(
+                      icon: Icon(
+                        _passwordVisible
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: const Color.fromRGBO(255, 255, 255, 0.5),
+                      ),
+                      onPressed: () {
+                        setState(
+                          () {
+                            _passwordVisible = !_passwordVisible;
+                          },
+                        );
+                      },
+                    ),
+                    keyboardType: TextInputType.visiblePassword,
                     textInputAction: TextInputAction.done,
                     style: const TextStyle(
                       color: Colors.white,
@@ -187,39 +220,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(
                     height: 28,
                   ),
-                  GestureDetector(
-                    onTap: _onSubmit,
-                    child: DecoratedBox(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5),
-                        ),
-                        gradient: LinearGradient(
-                          colors: [
-                            // HexColor('#62CDCB80'),
-                            // HexColor('#4599DB80'),
-                            Color.fromRGBO(98, 205, 203, 0.5),
-                            Color.fromRGBO(69, 153, 219, 0.5)
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                      ),
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 12,
-                          ),
-                          child: Text(
-                            _isSubmit ? 'Loading...' : 'Login',
-                            style: const TextStyle(
+                  SizedBox(
+                    height: 50,
+                    width: double.infinity,
+                    child: CupertinoButton.filled(
+                      onPressed: _onSubmit,
+                      child: _isSubmit
+                          ? const CupertinoActivityIndicator(
                               color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
+                            )
+                          : const Text('Login'),
                     ),
                   ),
                   const SizedBox(
