@@ -42,11 +42,53 @@ class ImageSection extends StatelessWidget {
                 ),
           ),
           if (userData['gender'] != null)
+            const SizedBox(
+              height: 5,
+            ),
+          if (userData['gender'] != null)
             Text(
               userData['gender'] as String,
               style: Theme.of(context).textTheme.labelMedium!.copyWith(
                     color: Colors.white,
                   ),
+            ),
+          if (userData['horoscope'] != null || userData['zodiac'] != null)
+            const SizedBox(
+              height: 10,
+            ),
+          if (userData['horoscope'] != null || userData['zodiac'] != null)
+            Wrap(
+              direction: Axis.horizontal,
+              crossAxisAlignment: WrapCrossAlignment.start,
+              alignment: WrapAlignment.start,
+              spacing: 15,
+              runSpacing: 10,
+              children: [
+                if (userData['horoscope'] != null)
+                  Chip(
+                    label: Text(
+                      userData['horoscope'].toString().trim(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    // avatar: Icon(Icons),
+                    backgroundColor: Colors.black87,
+                    side: const BorderSide(color: Colors.transparent),
+                  ),
+                if (userData['horoscope'] != null)
+                  Chip(
+                    label: Text(
+                      userData['zodiac'].toString().trim(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    // avatar: Icon(Icons),
+                    backgroundColor: Colors.black87,
+                    side: const BorderSide(color: Colors.transparent),
+                  ),
+              ],
             ),
         ],
       ),

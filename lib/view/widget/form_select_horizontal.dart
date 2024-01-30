@@ -197,6 +197,9 @@ class _ForDatePickerHorizontalState extends State<FormSelectHorizontal> {
                     // This is called when selected item is changed.
                     onSelectedItemChanged: (selectedItem) {
                       _onSelectedItem(selectedItem);
+                      setState(() {
+                        _controller.text = widget.optionSelect[selectedItem];
+                      });
                     },
                     children: List<Widget>.generate(widget.optionSelect.length,
                         (index) {

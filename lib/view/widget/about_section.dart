@@ -6,6 +6,7 @@ import 'package:youapp_frontend/service/utils.dart';
 import 'package:youapp_frontend/view/widget/form_datepicker_horizontal.dart';
 import 'package:youapp_frontend/view/widget/form_select_horizontal.dart';
 import 'package:youapp_frontend/view/widget/form_text_field_horizontal.dart';
+import 'package:youapp_frontend/view/widget/user_image_picker.dart';
 import 'package:youapp_frontend/view/widget/view_item_profile.dart';
 
 const httpRequest = HttpRequest();
@@ -74,6 +75,17 @@ class _AboutSectionState extends State<AboutSection> {
     if (_isEditing) {
       content = Column(
         children: [
+          UserImagePicker(
+            onSelectedImage: (selectedImage) {
+              _addToMapJson(
+                key: 'image',
+                value: selectedImage.path,
+              );
+            },
+          ),
+          const SizedBox(
+            height: 15,
+          ),
           FormTextFieldHorizontal(
             label: 'Display Name:',
             textAlign: TextAlign.end,
