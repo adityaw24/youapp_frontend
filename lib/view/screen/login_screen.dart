@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:youapp_frontend/controller/network/http_request.dart';
 import 'package:youapp_frontend/service/storage_service.dart';
 import 'package:youapp_frontend/view/screen/profile_screen.dart';
+import 'package:youapp_frontend/service/utils.dart';
 
 const httpRequest = HttpRequest();
 final storage = StorageService();
@@ -84,6 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await httpRequest.login(data);
     } on Exception catch (err) {
       // print('error => $err');
+      Utils.logError('Submit Login', err);
       setState(() {
         _isSubmit = false;
         errorMessage = err.toString();
@@ -101,12 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _snackbarNotification(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    Utils.snackbarNotification(context, message);
   }
 
   @override

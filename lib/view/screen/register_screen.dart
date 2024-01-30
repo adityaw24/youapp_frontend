@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:youapp_frontend/controller/network/http_request.dart';
+import 'package:youapp_frontend/service/utils.dart';
 
 const httpRequest = HttpRequest();
 
@@ -73,6 +74,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    if (username.contains(' ')) {
+      setState(() {
+        errorMessage = "Username has spaces!";
+      });
+      setState(() {
+        _isSubmit = false;
+      });
+      return;
+    }
+
     final data = jsonEncode({
       "email": email,
       "password": password,
@@ -87,6 +98,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
     } on Exception catch (err) {
       // print('error => $err');
+      Utils.logError('Submit Register', err);
       setState(() {
         errorMessage = err.toString();
       });
@@ -110,12 +122,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _snackbarNotification(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    Utils.snackbarNotification(context, message);
   }
 
   @override
