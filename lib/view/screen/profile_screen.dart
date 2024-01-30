@@ -6,6 +6,7 @@ import 'package:youapp_frontend/view/screen/auth_screen.dart';
 import 'package:youapp_frontend/view/widget/image_section.dart';
 import 'package:youapp_frontend/view/widget/about_section.dart';
 import 'package:youapp_frontend/service/utils.dart';
+import 'package:youapp_frontend/view/widget/interest_section.dart';
 
 const storage = FlutterSecureStorage();
 const httpRequest = HttpRequest();
@@ -54,26 +55,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Utils.snackbarNotification(context, message);
   }
 
-  // Future<Map<String, dynamic>> _getProfile = httpRequest.getProfile();
-
   void _refetchProfile() {
     setState(() {
       _getProfile = httpRequest.getProfile();
     });
   }
-
-  // void _onUpdateProfile() async {
-  //   final body = jsonEncode(_bodyJson);
-
-  //   try {
-  //     await httpRequest.updateProfile(body);
-  //   } catch (err) {
-  //     print('[Error updating profile] => $err');
-  //     _snackbarNotification('Failed updating profile!');
-  //   }
-
-  //   await httpRequest.getProfile();
-  // }
 
   @override
   void initState() {
@@ -84,10 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _bodyJson = value['data'];
       });
-      // print('body json profile => ${jsonEncode(_bodyJson)}');
     });
-
-    // _getProfile();
   }
 
   @override
@@ -190,19 +173,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   SliverToBoxAdapter(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 24,
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Data: ${snapshot.data!['data']}',
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    color: Colors.white,
-                                  ),
-                        ),
-                      ),
+                    child: InterestSection(
+                      userData: snapshot.data!['data']['interests'] ?? [],
+                      getProfile: () {
+                        _refetchProfile();
+                      },
                     ),
                   ),
                 ],

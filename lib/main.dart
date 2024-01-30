@@ -17,6 +17,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
+      localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+        DefaultMaterialLocalizations.delegate,
+        DefaultWidgetsLocalizations.delegate,
+      ],
       title: 'YouApp',
       debugShowCheckedModeBanner: false,
       theme: MaterialBasedCupertinoThemeData(
